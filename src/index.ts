@@ -1,13 +1,10 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { authRoutes } from './routes/auth';
 import { challengeRoutes } from './routes/challenges';
 import { weightRoutes } from './routes/weights';
 
 export type Env = {
   DB: D1Database;
-  RESEND_API_KEY: string;
-  FROM_EMAIL: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
@@ -18,8 +15,15 @@ app.use('/api/*', cors({
   credentials: true,
 }));
 
+// Ensure default user exists
+app.use('/api/*', async (c, next) => {
+  await c.env.DB.prepare(
+    `INSERT OR IGNORE INTO users (id, name, email, avatar_color) VALUES (?, ?, ?, ?)`
+  ).bind('default-user', 'Player', 'player@weightchallenge.app', '#007AFF').run();
+  await next();
+});
+
 // API routes
-app.route('/api/auth', authRoutes);
 app.route('/api/challenges', challengeRoutes);
 app.route('/api/weights', weightRoutes);
 

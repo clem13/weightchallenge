@@ -1,15 +1,13 @@
 import { Hono } from 'hono';
 import { Env } from '../index';
-import { authMiddleware, getUser } from '../lib/middleware';
+
+const DEFAULT_USER_ID = 'default-user';
 
 export const challengeRoutes = new Hono<{ Bindings: Env }>();
 
-// All challenge routes require auth
-challengeRoutes.use('*', authMiddleware);
-
 // Create a challenge
 challengeRoutes.post('/', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const { name, description, startDate, endDate } = await c.req.json<{
     name: string;
     description?: string;
@@ -38,7 +36,7 @@ challengeRoutes.post('/', async (c) => {
 
 // List user's challenges
 challengeRoutes.get('/', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
 
   const result = await c.env.DB.prepare(`
     SELECT c.id, c.name, c.description, c.join_code, c.start_date, c.end_date, c.created_by,
@@ -74,7 +72,7 @@ challengeRoutes.get('/', async (c) => {
 
 // Get single challenge with members
 challengeRoutes.get('/:id', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const challengeId = c.req.param('id');
 
   // Verify membership
@@ -129,7 +127,7 @@ challengeRoutes.get('/:id', async (c) => {
 
 // Join a challenge by code
 challengeRoutes.post('/join', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const { joinCode } = await c.req.json<{ joinCode: string }>();
 
   if (!joinCode) {

@@ -1,14 +1,13 @@
 import { Hono } from 'hono';
 import { Env } from '../index';
-import { authMiddleware, getUser } from '../lib/middleware';
+
+const DEFAULT_USER_ID = 'default-user';
 
 export const weightRoutes = new Hono<{ Bindings: Env }>();
 
-weightRoutes.use('*', authMiddleware);
-
 // Log a weight entry
 weightRoutes.post('/', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const { challengeId, weight, date, note } = await c.req.json<{
     challengeId: string;
     weight: number;
@@ -48,7 +47,7 @@ weightRoutes.post('/', async (c) => {
 
 // Get all weight entries for a challenge (all members)
 weightRoutes.get('/challenge/:challengeId', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const challengeId = c.req.param('challengeId');
 
   // Verify membership
@@ -91,7 +90,7 @@ weightRoutes.get('/challenge/:challengeId', async (c) => {
 
 // Get weight entries for current user in a challenge
 weightRoutes.get('/my/:challengeId', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const challengeId = c.req.param('challengeId');
 
   const entries = await c.env.DB.prepare(`
@@ -111,7 +110,7 @@ weightRoutes.get('/my/:challengeId', async (c) => {
 
 // Delete a weight entry
 weightRoutes.delete('/:id', async (c) => {
-  const { userId } = getUser(c);
+  const userId = DEFAULT_USER_ID;
   const entryId = c.req.param('id');
 
   const entry = await c.env.DB.prepare(

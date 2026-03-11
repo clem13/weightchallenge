@@ -1,19 +1,10 @@
 const API_BASE = '/api';
 
-function getToken(): string | null {
-  return localStorage.getItem('token');
-}
-
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = getToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...((options.headers as Record<string, string>) || {}),
   };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
 
@@ -25,34 +16,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json();
 }
 
-// Auth
 export interface User {
   id: string;
   name: string;
   email: string;
   avatarColor: string;
 }
-
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
-
-export const auth = {
-  sendCode: (email: string) =>
-    request<{ success: boolean; message: string }>('/auth/send-code', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    }),
-
-  verifyCode: (email: string, code: string) =>
-    request<AuthResponse>('/auth/verify-code', {
-      method: 'POST',
-      body: JSON.stringify({ email, code }),
-    }),
-
-  me: () => request<{ user: User }>('/auth/me'),
-};
 
 // Challenges
 export interface Challenge {
