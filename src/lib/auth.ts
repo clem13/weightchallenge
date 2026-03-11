@@ -1,5 +1,4 @@
 // Simple token-based auth using base64-encoded JSON
-// In production, replace with JWT or Cloudflare Access
 
 export interface TokenPayload {
   userId: string;
@@ -22,16 +21,45 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
-// Simple password hashing using Web Crypto API (suitable for CF Workers)
-export async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + 'weight-challenge-salt-2024');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+// Generate a 6-digit verification code
+export function generateCode(): string {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return String(array[0] % 1000000).padStart(6, '0');
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  const passwordHash = await hashPassword(password);
-  return passwordHash === hash;
+// Send verification code via Resend
+export async function sendVerificationEmail(
+  apiKey: string,
+  fromEmail: string,
+  toEmail: string,
+  code: string
+): Promise<void> {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: fromEmail,
+      to: [toEmail],
+      subject: `${code} is your Weight Challenge code`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 400px; margin: 0 auto; padding: 40px 20px;">
+          <h2 style="color: #1c1c1e; margin-bottom: 8px;">Your verification code</h2>
+          <p style="color: #8e8e93; margin-bottom: 24px;">Enter this code to sign in to Weight Challenge.</p>
+          <div style="background: #f2f2f7; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+            <span style="font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #007AFF;">${code}</span>
+          </div>
+          <p style="color: #8e8e93; font-size: 14px;">This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to send email: ${body}`);
+  }
 }

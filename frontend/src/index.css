@@ -218,12 +218,54 @@ input, button, textarea, select {
   padding: 20px 16px;
 }
 
+.code-inputs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
 .code-input {
+  width: 48px;
+  height: 56px;
   font-size: 24px;
   font-weight: 700;
   text-align: center;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  border: 1.5px solid var(--color-gray-5);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  outline: none;
+  transition: var(--transition);
+  caret-color: var(--color-blue);
+}
+
+.code-input:focus {
+  border-color: var(--color-blue);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+}
+
+.code-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-blue);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.btn-link:disabled {
+  color: var(--color-text-tertiary);
+  cursor: default;
 }
 
 /* ---- Buttons ---- */

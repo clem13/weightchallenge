@@ -6,6 +6,8 @@ import { weightRoutes } from './routes/weights';
 
 export type Env = {
   DB: D1Database;
+  RESEND_API_KEY: string;
+  FROM_EMAIL: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();

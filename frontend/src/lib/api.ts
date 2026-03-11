@@ -39,16 +39,16 @@ export interface AuthResponse {
 }
 
 export const auth = {
-  signup: (name: string, email: string, password: string) =>
-    request<AuthResponse>('/auth/signup', {
+  sendCode: (email: string) =>
+    request<{ success: boolean; message: string }>('/auth/send-code', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ email }),
     }),
 
-  login: (email: string, password: string) =>
-    request<AuthResponse>('/auth/login', {
+  verifyCode: (email: string, code: string) =>
+    request<AuthResponse>('/auth/verify-code', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, code }),
     }),
 
   me: () => request<{ user: User }>('/auth/me'),

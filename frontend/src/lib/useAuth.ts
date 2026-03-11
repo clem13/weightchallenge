@@ -21,16 +21,12 @@ export function useAuth() {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = await auth.login(email, password);
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('user', JSON.stringify(res.user));
-    setUser(res.user);
-    return res.user;
+  const sendCode = useCallback(async (email: string) => {
+    await auth.sendCode(email);
   }, []);
 
-  const signup = useCallback(async (name: string, email: string, password: string) => {
-    const res = await auth.signup(name, email, password);
+  const verifyCode = useCallback(async (email: string, code: string) => {
+    const res = await auth.verifyCode(email, code);
     localStorage.setItem('token', res.token);
     localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
@@ -43,5 +39,5 @@ export function useAuth() {
     setUser(null);
   }, []);
 
-  return { user, loading, login, signup, logout };
+  return { user, loading, sendCode, verifyCode, logout };
 }

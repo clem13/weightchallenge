@@ -5,7 +5,7 @@ import { ChallengeList } from './components/ChallengeList';
 import { ChallengeDashboard } from './components/ChallengeDashboard';
 
 export function App() {
-  const { user, loading, login, signup, logout } = useAuth();
+  const { user, loading, sendCode, verifyCode, logout } = useAuth();
 
   if (loading) {
     return (
@@ -16,7 +16,7 @@ export function App() {
   }
 
   if (!user) {
-    return <AuthScreen onLogin={login} onSignup={signup} />;
+    return <AuthScreen onSendCode={sendCode} onVerifyCode={verifyCode} />;
   }
 
   return (
