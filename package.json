@@ -1,0 +1,23 @@
+{
+  "name": "weightchallenge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
+    "dev:api": "wrangler dev src/index.ts --local --persist-to .wrangler/state",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "deploy": "npm run build && wrangler deploy",
+    "db:migrate": "wrangler d1 execute weight-challenge-db --local --file=src/db/schema.sql",
+    "db:migrate:remote": "wrangler d1 execute weight-challenge-db --remote --file=src/db/schema.sql"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "concurrently": "^8.2.2",
+    "wrangler": "^3.57.0"
+  }
+}
