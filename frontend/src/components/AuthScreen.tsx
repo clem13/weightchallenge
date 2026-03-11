@@ -121,7 +121,7 @@ export function AuthScreen({ onSendCode, onVerifyCode }: AuthScreenProps) {
               <text x="50" y="68" fontFamily="Inter, system-ui" fontSize="50" fontWeight="700" fill="white" textAnchor="middle">W</text>
             </svg>
           </div>
-          <h1 className="auth-title">Weight Challenge</h1>
+          <h1 className="auth-title">Big Boss Weight Challenge</h1>
           <p className="auth-subtitle">
             {step === 'email'
               ? 'Enter your email to sign in'
