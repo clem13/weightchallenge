@@ -11,7 +11,6 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
   const navigate = useNavigate();
   const [list, setList] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
 
   useEffect(() => {
@@ -22,6 +21,9 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
     try {
       const { challenges: data } = await challenges.list();
       setList(data);
+      if (data.length > 0) {
+        navigate(`/challenge/${data[0].id}`, { replace: true });
+      }
     } catch {
       // handle error silently
     } finally {
@@ -37,7 +39,7 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
             {user.name[0].toUpperCase()}
           </div>
           <div>
-            <h1 className="page-title">Challenges</h1>
+            <h1 className="page-title">Big Boss Weight Challenge</h1>
             <p className="page-subtitle">Hey, {user.name}</p>
           </div>
         </div>
@@ -66,7 +68,7 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
               </svg>
             </div>
             <h3>No challenges yet</h3>
-            <p>Create a new challenge or join one with an invite code</p>
+            <p>Join the challenge with an invite code</p>
           </div>
         ) : (
           <div className="challenge-grid">
@@ -97,25 +99,11 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
         )}
 
         <div className="action-buttons">
-          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
-            Create Challenge
-          </button>
-          <button className="btn btn-secondary" onClick={() => setShowJoin(true)}>
+          <button className="btn btn-primary" onClick={() => setShowJoin(true)}>
             Join Challenge
           </button>
         </div>
       </div>
-
-      {showCreate && (
-        <CreateChallengeModal
-          onClose={() => setShowCreate(false)}
-          onCreated={(ch) => {
-            setList((prev) => [ch, ...prev]);
-            setShowCreate(false);
-            navigate(`/challenge/${ch.id}`);
-          }}
-        />
-      )}
 
       {showJoin && (
         <JoinChallengeModal
@@ -127,78 +115,6 @@ export function ChallengeList({ user, onLogout }: ChallengeListProps) {
           }}
         />
       )}
-    </div>
-  );
-}
-
-function CreateChallengeModal({
-  onClose,
-  onCreated,
-}: {
-  onClose: () => void;
-  onCreated: (ch: Challenge) => void;
-}) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError('');
-    try {
-      const ch = await challenges.create({
-        name,
-        description: description || undefined,
-        startDate: new Date().toISOString().split('T')[0],
-      });
-      onCreated({ ...ch, memberCount: 1 });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>New Challenge</h2>
-          <button className="btn-icon" onClick={onClose}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Challenge Name</label>
-            <input
-              type="text"
-              className="form-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Summer Shred 2024"
-              required
-              autoFocus
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Description (optional)</label>
-            <textarea
-              className="form-input form-textarea"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What's this challenge about?"
-              rows={3}
-            />
-          </div>
-          {error && <div className="form-error">{error}</div>}
-          <button type="submit" className="btn btn-primary btn-full" disabled={submitting}>
-            {submitting ? <span className="btn-loading" /> : 'Create Challenge'}
-          </button>
-        </form>
-      </div>
     </div>
   );
 }

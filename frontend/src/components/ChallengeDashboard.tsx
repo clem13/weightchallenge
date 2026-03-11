@@ -86,7 +86,7 @@ export function ChallengeDashboard({ user }: ChallengeDashboardProps) {
             </svg>
           </button>
           <div>
-            <h1 className="page-title">{challenge.name}</h1>
+            <h1 className="page-title">Big Boss Weight Challenge</h1>
             <p className="page-subtitle">{members.length} {members.length === 1 ? 'member' : 'members'}</p>
           </div>
         </div>

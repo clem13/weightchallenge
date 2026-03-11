@@ -44,11 +44,11 @@ export async function sendVerificationEmail(
     body: JSON.stringify({
       from: fromEmail,
       to: [toEmail],
-      subject: `${code} is your Weight Challenge code`,
+      subject: `${code} is your Big Boss Weight Challenge code`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 400px; margin: 0 auto; padding: 40px 20px;">
           <h2 style="color: #1c1c1e; margin-bottom: 8px;">Your verification code</h2>
-          <p style="color: #8e8e93; margin-bottom: 24px;">Enter this code to sign in to Weight Challenge.</p>
+          <p style="color: #8e8e93; margin-bottom: 24px;">Enter this code to sign in to Big Boss Weight Challenge.</p>
           <div style="background: #f2f2f7; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
             <span style="font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #007AFF;">${code}</span>
           </div>

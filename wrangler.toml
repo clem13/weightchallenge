@@ -4,7 +4,7 @@ compatibility_date = "2024-05-12"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-FROM_EMAIL = "Weight Challenge <noreply@yourdomain.com>"
+FROM_EMAIL = "Big Boss Weight Challenge <noreply@yourdomain.com>"
 
 [assets]
 directory = "./frontend/dist"
