@@ -9,4 +9,4 @@ directory = "./frontend/dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "weight-challenge-db"
-database_id = "local-dev-db"
+database_id = "ef728569-8b5e-494d-b0c1-f75c4455548d"
